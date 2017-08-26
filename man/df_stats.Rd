@@ -6,13 +6,13 @@
 \usage{
 df_stats(formula, data, ..., drop = TRUE, fargs = list(), sep = "_",
   format = c("wide", "long"), groups = NULL, long_names = TRUE,
-  nice_names = FALSE)
+  nice_names = FALSE, na.action = "na.warn")
 }
 \arguments{
 \item{formula}{A formula indicating which variables are to be used.
-Semantics are approximately as in \code{\link{lm}()} since \code{\link[stats]{model.frame}()}
+Semantics are approximately as in \code{\link[=lm]{lm()}} since \code{\link[stats:model.frame]{stats::model.frame()}}
 is used to turn the formula into a data frame.  But first conditions and \code{groups}
-are re-expressed into a form that \code{\link[stats]{model.frame}()} can interpret.
+are re-expressed into a form that \code{\link[stats:model.frame]{stats::model.frame()}} can interpret.
 See details.}
 
 \item{data}{A data frame or list containing the variables.}
@@ -50,8 +50,17 @@ of the variable being summarized as well as the summarizing function name in the
 case when names are not derived from the names of the returned object or
 an argument name.}
 
-\item{nice_names}{A logical indicating whether \code{\link{make.names}()} should be
+\item{nice_names}{A logical indicating whether \code{\link[=make.names]{make.names()}} should be
 used to force names of the returned data frame to by syntactically valid.}
+
+\item{na.action}{A function (or character string naming a function) that determines how NAs are treated.
+Options include \code{"na.warn"} which removes missing data and emits a warning,
+\code{"na.pass"} which includes all of the data,
+\code{"na.omit"} or \code{"na.exclude"} which silently discard missing data,
+and \code{"na.fail"} which fails if there is missing data.
+See \code{link[stats]{na.pass}()} and \code{\link[=na.warn]{na.warn()}} for details.
+The default is \code{"na.warn"} unless no function are specified in \code{...}, in which case
+\code{"na.pass"} is used since the default function reports the number of missing values.}
 }
 \value{
 A data frame.
@@ -69,10 +78,10 @@ Use a two-sided formula to compute summary statistics for the left hand expressi
 for each combination of levels of the expressions occurring on the right hand side.
 This is most useful when the left hand side is quantitative and each expression
 on the right hand side has relatively few unique values.  A function like
-\code{\link[mosaic]{ntiles}()} is often useful to create a few groups of roughly equal size
+\code{\link[mosaic:ntiles]{mosaic::ntiles()}} is often useful to create a few groups of roughly equal size
 determined by ranges of a quantitative variable.  See the examples.
 
-Note that unlike \code{dplyr::\link[dplyr]{summarise}()}, `df_stats()` ignores
+Note that unlike \code{dplyr::\link[dplyr]{summarise}()}, \code{df_stats()} ignores
 any grouping defined in \code{data} if \code{data} is a grouped \code{tibble}.
 
 Names of columns in the resulting data frame are determined as follows.  For named
@@ -86,7 +95,7 @@ See the examples.
 \section{Cautions Regarding Formulas}{
 
 
-The use of \code{|} to define groups is tricky because (a) \code{\link[stats]{model.frame}()}
+The use of \code{|} to define groups is tricky because (a) \code{\link[stats:model.frame]{stats::model.frame()}}
 doesn't handle this sort of thing and (b) \code{|} is also used for logical or.  The
 current algorithm for handling this will turn the first  occurrence of \code{|} into an attempt
 to condition, so logical or cannot be used before conditioning in the formula.
@@ -116,13 +125,17 @@ df_stats( hp ~ cyl | gear, data = mtcars, mean, median, range)
 df_stats( hp ~ cyl, groups = gear, data = mtcars, mean, median, range)
 # magrittr style piping is also supported
 if(require(ggformula)) {
-mtcars \%>\% df_stats(hp ~ cyl)
-gf_violin(hp ~ cyl, data = mtcars, group = ~ cyl) \%>\%
+  mtcars \%>\%
+  df_stats(hp ~ cyl)
+  gf_violin(hp ~ cyl, data = mtcars, group = ~ cyl) \%>\%
   gf_point(mean_hp ~ cyl, data = df_stats(hp ~ cyl, data = mtcars, mean))
 }
 
 # can be used on a categorical response, too
 if (require(mosaic)) {
   df_stats(sex ~ substance, data = HELPrct, table, prop_female = prop)
+}
+if (require(mosaic)) {
+  df_stats(sex ~ substance, data = HELPrct, table, props)
 }
 }
