@@ -1,8 +1,9 @@
-9c66201a61151895146913fde43c818f *DESCRIPTION
-91e4a86a2c39928be3f51b30400d0f67 *NAMESPACE
-e9605b25b247559cb269cec3215e7dca *NEWS.md
+94c3b1d89e3b363663adaae642ee4ee0 *DESCRIPTION
+9c8c5d7a69e59e009768348619140b5a *NAMESPACE
+14a3b6d410a10205b0f2cbc33c4263ff *NEWS.md
 27c1a10ab81b9e346b8ff559644ddcb0 *R/ashplots.R
 0b8024f9e6ecb6425d9bae63ab8845ca *R/df_stats.R
+dd5e8d947c4b2e53341d7d18c4f009de *R/fitdistr.R
 68b329da9893e34099c7d8ad5cb9c940 *R/formula-utils.R
 9b6f65fbe1dfef2ddb20c28c8f19a2b0 *R/formulas.R
 e45018d9a35ae3bd8f4f1c2ac6f116da *R/infer-transformation.R
@@ -16,6 +17,7 @@ b3406714d900533979f8031ecf8a7a58 *R/props-counts.R
 cab3336c87c39c71ec662dc751e8bb44 *man/ashplot.Rd
 a6aaa21994fe73613a9b34106f0896ed *man/coef.Rd
 a07e2d7da4ba082c209cc7bb09172adc *man/df_stats.Rd
+0c9df90f3a8fb5ea9f0fa123edad7c77 *man/fit_distr_fun.Rd
 be4b3f63dbc30ee5a7898d0ea86d2cff *man/formularise.Rd
 b2108f0d7f6134267c7bfcee0518aa89 *man/infer_transformation.Rd
 7ca224ab53cf30b3e6ccc9d33921d640 *man/list-utils.Rd
