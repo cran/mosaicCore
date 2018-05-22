@@ -22,12 +22,15 @@ a default set of summary statistics is used.  Functions used must accept
 a vector of values and return either a (possibly named) single value,
 a (possibly named) vector of values, or a data frame with one row.
 Functions can be specified with character strings, names, or expressions
-that look like function calls wit the first argument missing.  The latter
+that look like function calls with the first argument missing.  The latter
 option provides a convenient way to specify additional arguments.  See the
 examples.
 Note: If these arguments are named, those names will be used in the data
 frame returned (see details).  Such names may not be among the names of the named
-arguments of \code{df_stats}().}
+arguments of \code{df_stats}().
+
+If a function is specified using \code{::}, be sure to include the trailing
+parens, even if there are no additional arguments required.}
 
 \item{drop}{A logical indicating whether combinations of the grouping
 variables that do not occur in \code{data} should be dropped from the
@@ -63,7 +66,15 @@ The default is \code{"na.warn"} unless no function are specified in \code{...}, 
 \code{"na.pass"} is used since the default function reports the number of missing values.}
 }
 \value{
-A data frame.
+A data frame. Names of columns in the resulting data frame consist of three
+parts separated by \code{sep}.
+The first part is the argument name, if it exists, else the function.
+The second part is the name of the variable being summarised if \code{long_names == TRUE} and
+the first part is the function name, else ""
+The third part is the names of the object returned by the summarizing function, if they
+exist, else a sequence of consecutive integers or "" if there is only one component
+returned by the summarizing function.
+See the examples.
 }
 \description{
 Creates a data frame of statistics calculated on one variable, possibly for each
@@ -83,14 +94,6 @@ determined by ranges of a quantitative variable.  See the examples.
 
 Note that unlike \code{dplyr::\link[dplyr]{summarise}()}, \code{df_stats()} ignores
 any grouping defined in \code{data} if \code{data} is a grouped \code{tibble}.
-
-Names of columns in the resulting data frame are determined as follows.  For named
-arguments in \code{...}, the argument name is used.  For unnamed arguments, if the
-statistic function returns a result with names, those names are used.  Else, a name is
-computed from the expression in \code{...} and the name of the variable being summarized.
-For functions that produce multiple
-outputs without names, consecutive integers are appended to the names.
-See the examples.
 }
 \section{Cautions Regarding Formulas}{
 
@@ -111,6 +114,9 @@ df_stats( ~ hp, data = mtcars)
 # There are several ways to specify functions
 df_stats( ~ hp, data = mtcars, mean, trimmed_mean = mean(trim = 0.1), "median",
   range, Q = quantile(c(0.25, 0.75)))
+# When using ::, be sure to include parents, even if there are no additional arguments.
+df_stats( ~ hp, data = mtcars, mean = base::mean(), trimmed_mean = base::mean(trim = 0.1))
+
 # force names to by syntactically valid
 df_stats( ~ hp, data = mtcars, Q = quantile(c(0.25, 0.75)), nice_names = TRUE)
 # shorter names
@@ -123,15 +129,28 @@ df_stats( hp ~ cyl, data = mtcars, mean, median, range, format = "long")
 df_stats( hp ~ cyl + gear, data = mtcars, mean, median, range)
 df_stats( hp ~ cyl | gear, data = mtcars, mean, median, range)
 df_stats( hp ~ cyl, groups = gear, data = mtcars, mean, median, range)
-# magrittr style piping is also supported
+
+# because the result is a data frame, df_stats() is also useful for creating plots
 if(require(ggformula)) {
-  mtcars \%>\%
-  df_stats(hp ~ cyl)
   gf_violin(hp ~ cyl, data = mtcars, group = ~ cyl) \%>\%
-  gf_point(mean_hp ~ cyl, data = df_stats(hp ~ cyl, data = mtcars, mean))
+  gf_point(mean_hp ~ cyl, data = df_stats(hp ~ cyl, data = mtcars, mean),
+    color = ~ "mean") \%>\%
+  gf_point(median_hp ~ cyl, data = df_stats(hp ~ cyl, data = mtcars, median),
+    color = ~"median") \%>\%
+  gf_labs(color = "")
 }
 
-# can be used on a categorical response, too
+# magrittr style piping is also supported
+if (require(ggformula)) {
+  mtcars \%>\%
+    df_stats(hp ~ cyl, mean, median, range)
+  mtcars \%>\%
+    df_stats(hp ~ cyl + gear, mean, median, range) \%>\%
+    gf_point(mean_hp ~ cyl, color = ~ factor(gear)) \%>\%
+    gf_line(mean_hp ~ cyl, color = ~ factor(gear))
+}
+
+# can be used with a categorical response, too
 if (require(mosaic)) {
   df_stats(sex ~ substance, data = HELPrct, table, prop_female = prop)
 }
