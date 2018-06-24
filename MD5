@@ -1,5 +1,5 @@
-a9e1fc10ec1be49dfecbac886505ead5 *DESCRIPTION
-440a88f08c2f1ee79b7b678c32468f59 *NAMESPACE
+ef92ac3e5dc64692460d5810e1f37864 *DESCRIPTION
+56fecf58afe1a7ef70335da998e1e1a0 *NAMESPACE
 9c41675fb396a02a401c0e5676bedd3a *NEWS.md
 e9cf58596952241475f2c1aebecfc8b1 *R/aggregate.R
 27c1a10ab81b9e346b8ff559644ddcb0 *R/ashplots.R
@@ -7,12 +7,12 @@ a97204436ba6fefde79291a26d59973f *R/df_stats.R
 9424877695c14b28240abf24d9cf3c2c *R/dfapply.R
 ac908ea909aff209a52ab479a7a0106e *R/ediff.R
 f0dda356ecc469f5723fb4f09295ff95 *R/evalFormula.R
-6477b05c34b43f8d505a667aab26b9fa *R/fitdistr.R
+a3958503101760fb5fc508951061d164 *R/fitdistr.R
 d989ebbc21af7fce9302bf4a21f72b63 *R/formula-utils.R
 9b6f65fbe1dfef2ddb20c28c8f19a2b0 *R/formulas.R
 e45018d9a35ae3bd8f4f1c2ac6f116da *R/infer-transformation.R
-f0428114d83c10a3f0040c63cce472b6 *R/inspect.R
-d7e9e18e2954e0d3278b1dbaf1083b04 *R/interval-statistics.R
+755471f49b590b53fcc55819a2435c2e *R/inspect.R
+d6fa20e7685c5475bf1756a77c482a12 *R/interval-statistics.R
 d76c842b2870bc8f9060378d3cf44fc0 *R/list-utils.R
 c03e429ad740da3968854c883bbeb716 *R/logit.R
 eab5abddb65c4e5bfd4242a43a07a300 *R/makeFun.R
@@ -32,10 +32,10 @@ c93d15036778940877f80c9899752c12 *man/columns.Rd
 5266576b154a70ea0dfbbc200904760f *man/ediff.Rd
 45ea04de6e6413f5b3f2d6ea60d089d4 *man/evalFormula.Rd
 4b535cc60bf90b7d3b7f4253623f8b7c *man/evalSubFormula.Rd
-0c9df90f3a8fb5ea9f0fa123edad7c77 *man/fit_distr_fun.Rd
+1d7dbf2b3ec91a46d1db67beb235c8e2 *man/fit_distr_fun.Rd
 be4b3f63dbc30ee5a7898d0ea86d2cff *man/formularise.Rd
 b2108f0d7f6134267c7bfcee0518aa89 *man/infer_transformation.Rd
-3bfef9b212dba89e507bb1abb2757b18 *man/inspect.Rd
+eb56ce749f181f6e3f0216d04ddcb781 *man/inspect.Rd
 cdbc13dcc67b8203f70162b9531eec0e *man/interval_statistics.Rd
 8969248ea7f2b68b62cfc752781ac444 *man/joinFrames.Rd
 7ca224ab53cf30b3e6ccc9d33921d640 *man/list-utils.Rd
