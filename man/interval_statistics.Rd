@@ -17,9 +17,13 @@ ci.median(x, level = 0.9, na.rm = TRUE)
 
 ci.sd(x, level = 0.95, na.rm = TRUE)
 
-ci.prop(x, success = NULL, level = 0.95, method = c("Clopper-Pearson",
-  "binom.test", "Score", "Wilson", "prop.test", "Wald", "Agresti-Coull",
-  "Plus4"))
+ci.prop(
+  x,
+  success = NULL,
+  level = 0.95,
+  method = c("Clopper-Pearson", "binom.test", "Score", "Wilson", "prop.test", "Wald",
+    "Agresti-Coull", "Plus4")
+)
 }
 \arguments{
 \item{x}{a variable.}
@@ -75,6 +79,6 @@ ci.mean(mtcars$hp)
 
 }
 \seealso{
-\code{\link[mosaicCore:df_stats]{mosaicCore::df_stats()}}, \code{\link[mosaic:binom.test]{mosaic::binom.test()}}, \code{\link[mosaic:t.test]{mosaic::t.test()}}
+\code{\link[=df_stats]{df_stats()}}, \code{\link[mosaic:binom.test]{mosaic::binom.test()}}, \code{\link[mosaic:ttest]{mosaic::t.test()}}
 }
 \keyword{stats}

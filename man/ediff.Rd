@@ -4,8 +4,15 @@
 \alias{ediff}
 \title{Lagged Differences with equal length}
 \usage{
-ediff(x, lag = 1, differences = 1, pad = c("head", "tail", "symmetric"),
-  pad.value = NA, frontPad, ...)
+ediff(
+  x,
+  lag = 1,
+  differences = 1,
+  pad = c("head", "tail", "symmetric"),
+  pad.value = NA,
+  frontPad,
+  ...
+)
 }
 \arguments{
 \item{x}{a numeric vector or a matrix containing the values to be differenced}
@@ -40,11 +47,6 @@ ediff(x, lag = 2)
 ediff(x, differences = 2)
 ediff(x, differences = 2, pad = "symmetric")
 ediff(.leap.seconds)
-if (require(mosaic)) {
-  Men <- subset(SwimRecords, sex == "M")
-  Men <- mutate(Men, change = ediff(time), interval = ediff(year))
-  head(Men)
-}
 }
 \seealso{
 \code{\link[=diff]{diff()}} since

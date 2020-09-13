@@ -3,8 +3,32 @@
 #' @importFrom rlang is_character f_rhs eval_tidy quos
 #' @importFrom stats as.formula na.exclude
 NA
-utils::globalVariables(c("stat", "value"))
+utils::globalVariables(c("stat", "value", "response_var_"))
 
+
+
+#' Return rhs of a formula or expression
+#'
+#' Return rhs of a formula or expression
+#'
+#' @param x A formula or some other object to be quoted
+#'
+#' @examples
+#' # This should evaluate to TRUE
+#' rhs_or_expr(~z)
+#' rhs_or_expr(z)
+#' identical(rhs_or_expr(~z), rhs_or_expr(z))
+
+#' @importFrom rlang is_formula f_rhs
+#' @export
+
+rhs_or_expr <- function(x) {
+  e <- enexpr(x)
+  if (rlang::is_formula(e)) {
+    return(rlang::f_rhs(e))
+  }
+  return(e)
+}
 
 # crude way to convert | to + in formulas
 
@@ -16,18 +40,20 @@ cond2sum <- function(formula) {
 }
 
 
-#' Calculate statistics on a variable
+#' Calculate statistics for "response" variables
 #'
-#' Creates a data frame of statistics calculated on one variable, possibly for each
-#' group formed by combinations of additional variables.
+#' Creates a data frame of statistics calculated on one or more response variables,
+#' possibly for each group formed by combinations of additional variables.
 #' The resulting data frame has one column
-#' for each of the statistics requested as well as columns for any grouping variables.
-#' @inheritParams stats::model.frame
+#' for each of the statistics requested as well as columns for any grouping variables and a
+#' column identifying the response variable for which the statistics was calculated.
 #'
 #' @param formula A formula indicating which variables are to be used.
 #'   Semantics are approximately as in [lm()] since [stats::model.frame()]
 #'   is used to turn the formula into a data frame.  But first conditions and `groups`
 #'   are re-expressed into a form that [stats::model.frame()] can interpret.
+#'   Multiple response variables can be separated by `+` on the left hand side of
+#'   the formula.  A one-sided formula `~ rhs | cond` is treated as `rhs ~ 1 | cond`.
 #'   See details.
 #' @param data A data frame or list containing the variables.
 #' @param ... Functions used to compute the statistics.  If this is empty,
@@ -45,7 +71,7 @@ cond2sum <- function(formula) {
 #'   If a function is specified using `::`, be sure to include the trailing
 #'   parens, even if there are no additional arguments required.
 #'
-#' @param groups An expression to be evaluated in `data` and defining (additional) groups.
+#' @param groups An expression or formula to be evaluated in `data` and defining (additional) groups.
 #'   This isn't necessary, since these can be placed into the formula, but it is provided
 #'   for similarity to other functions from the \pkg{mosaic} package.
 #' @param drop A logical indicating whether combinations of the grouping
@@ -73,10 +99,11 @@ cond2sum <- function(formula) {
 #' @importFrom stats quantile
 #'
 #' @details
-#' Use a one-sided formula to compute summary statistics for the left hand side
+#' Use a one-sided formula to compute summary statistics for the right hand side
 #' expression over the entire data.
-#' Use a two-sided formula to compute summary statistics for the left hand expression
-#' for each combination of levels of the expressions occurring on the right hand side.
+#' Use a two-sided formula to compute summary statistics for the left hand (response)
+#' expression(s) for each combination of levels of the expressions occurring on the
+#' right hand side.
 #' This is most useful when the left hand side is quantitative and each expression
 #' on the right hand side has relatively few unique values.  A function like
 #' [mosaic::ntiles()] is often useful to create a few groups of roughly equal size
@@ -114,28 +141,30 @@ cond2sum <- function(formula) {
 #' # There are several ways to specify functions
 #' df_stats( ~ hp, data = mtcars, mean, trimmed_mean = mean(trim = 0.1), "median",
 #'   range, Q = quantile(c(0.25, 0.75)))
-#' # When using ::, be sure to include parents, even if there are no additional arguments.
+#' # When using ::, be sure to include parens, even if there are no additional arguments.
 #' df_stats( ~ hp, data = mtcars, mean = base::mean(), trimmed_mean = base::mean(trim = 0.1))
 #'
 #' # force names to by syntactically valid
 #' df_stats( ~ hp, data = mtcars, Q = quantile(c(0.25, 0.75)), nice_names = TRUE)
-#' # shorter names
+#' # longer names
 #' df_stats( ~ hp, data = mtcars, mean, trimmed_mean = mean(trim = 0.1), "median", range,
-#'   long_names = FALSE)
+#'   long_names = TRUE)
 #' # wide vs long format
 #' df_stats( hp ~ cyl, data = mtcars, mean, median, range)
+#' df_stats( hp + wt + mpg ~ cyl, data = mtcars, mean, median, range)
 #' df_stats( hp ~ cyl, data = mtcars, mean, median, range, format = "long")
-#' # More than one grouping variable -- 3 ways.
+#' # More than one grouping variable -- 4 ways.
 #' df_stats( hp ~ cyl + gear, data = mtcars, mean, median, range)
 #' df_stats( hp ~ cyl | gear, data = mtcars, mean, median, range)
+#' df_stats( hp ~ cyl, groups = ~gear, data = mtcars, mean, median, range)
 #' df_stats( hp ~ cyl, groups = gear, data = mtcars, mean, median, range)
 #'
 #' # because the result is a data frame, df_stats() is also useful for creating plots
 #' if(require(ggformula)) {
 #'   gf_violin(hp ~ cyl, data = mtcars, group = ~ cyl) %>%
-#'   gf_point(mean_hp ~ cyl, data = df_stats(hp ~ cyl, data = mtcars, mean),
+#'   gf_point(mean ~ cyl, data = df_stats(hp ~ cyl, data = mtcars, mean),
 #'     color = ~ "mean") %>%
-#'   gf_point(median_hp ~ cyl, data = df_stats(hp ~ cyl, data = mtcars, median),
+#'   gf_point(median ~ cyl, data = df_stats(hp ~ cyl, data = mtcars, median),
 #'     color = ~"median") %>%
 #'   gf_labs(color = "")
 #' }
@@ -146,8 +175,8 @@ cond2sum <- function(formula) {
 #'     df_stats(hp ~ cyl, mean, median, range)
 #'   mtcars %>%
 #'     df_stats(hp ~ cyl + gear, mean, median, range) %>%
-#'     gf_point(mean_hp ~ cyl, color = ~ factor(gear)) %>%
-#'     gf_line(mean_hp ~ cyl, color = ~ factor(gear))
+#'     gf_point(mean ~ cyl, color = ~ factor(gear)) %>%
+#'     gf_line(mean ~ cyl, color = ~ factor(gear))
 #' }
 #'
 #' # can be used with a categorical response, too
@@ -158,16 +187,16 @@ cond2sum <- function(formula) {
 #'   df_stats(sex ~ substance, data = HELPrct, table, props)
 #' }
 #' @export
-#' @importFrom rlang eval_tidy exprs expr quos new_quosure
+#' @importFrom rlang eval_tidy exprs expr quos new_quosure enexpr !!
 #' @importFrom stats model.frame aggregate
 #'
 df_stats <- function(formula, data, ..., drop = TRUE, fargs = list(),
                      sep = "_",
                      format = c("wide", "long"), groups = NULL,
-                     long_names = TRUE, nice_names = FALSE,
+                     long_names = FALSE, nice_names = FALSE,
                      na.action = "na.warn") {
 
-  qdots <- dplyr::quos(...)
+  qdots <- rlang::enquos(...)
   # dots <- rlang::exprs(...)
   format <- match.arg(format)
 
@@ -186,7 +215,53 @@ df_stats <- function(formula, data, ..., drop = TRUE, fargs = list(),
   if ( ! inherits(formula, "formula")) stop("first arg must be a formula")
   if ( ! inherits(data, "data.frame")) stop("second arg must be a data.frame")
 
-  formula <- cond2sum(mosaic_formula_q(reop_formula(formula), groups = groups))
+  formula <- cond2sum(mosaic_formula_q(reop_formula(formula), groups = !!rlang::enexpr(groups)))
+
+  if (length(formula) == 2L) {
+    formula <- substitute(x ~ 1, list(x = formula[[2]]))
+  }
+
+  left <- rlang::f_lhs(formula)
+
+  if (left == "." || (length(left) > 1 && left[[1]] == "+")) {
+    if (left == ".") {
+      # create lefts as list of names in data but not on rhs
+      lefts <-
+        setdiff(
+          names(data),
+          sapply(parse_call(rlang::f_rhs(formula)), deparse)
+      )
+      lefts <- lapply(lefts, as.name)
+    } else { # ie,  if (length(left) > 1 && left[[1]] == "+") {
+      lefts <- parse_call(left)
+    }
+    long_names <- FALSE
+    formulas <-
+      lapply(
+        lefts,
+        function(x) {
+          my_form <- substitute(L ~ R, list(L = x, R = rlang::f_rhs(formula)))
+          class(my_form) <- "formula"
+          my_form
+        }
+      )
+    res <-
+      lapply(
+        formulas,
+        function(f) {
+          df_stats(f, data, ..., drop = drop,
+                   fargs = fargs, sep = sep, format = format,
+                   # groups = !!enexpr(groups), long_names = long_names,
+                   nice_names = nice_names, na.action = na.action)
+          #   dplyr::mutate(`_response_` = deparse(rlang::f_lhs(f)))
+          # res <- dplyr::select(res,  `_response_`, names(res))
+          # if (! "response" %in% names(data)) {
+          #   res <- dplyr::rename(res, response = `_response_`)
+          # }
+        }
+      )
+    return(bind_rows(res))
+  }
 
   if (identical(na.action, "na.warn")) na.action <- na.warn
 
@@ -233,7 +308,8 @@ df_stats <- function(formula, data, ..., drop = TRUE, fargs = list(),
   # res <- lapply(res, function(x) data.frame(lapply(data.frame(x$x), unlist)))
 
   res0 <- res
-  res1 <- lapply(res, function(x) make_df(x$x))
+  # reference by position -- last column -- to avoid bug when x is one of the grouping vars
+  res1 <- lapply(res, function(x) make_df(x[[dim(x)[2]]]))
   res <- res1
 
   # extract result names from data frames just created.
@@ -276,10 +352,7 @@ df_stats <- function(formula, data, ..., drop = TRUE, fargs = list(),
     ifelse(sapply(res_names, is.null), "", res_names)
   alt_res_names <- lapply(ncols, function(nc) if (nc > 1) format(1:nc) else "")
   part3 <-
-    mapply(
-      function(r, a) { if (is.null(r) || r == "") a else r },
-      res_names, alt_res_names
-    )
+    ifelse(res_names == "", alt_res_names, res_names)
   part3 <- unlist(part3)
 
   # paste it all together
@@ -301,10 +374,23 @@ df_stats <- function(formula, data, ..., drop = TRUE, fargs = list(),
   }
   row.names(res) <- NULL
 
+  res <-
+    res %>%
+    dplyr::mutate(response_var_ = deparse(rlang::f_lhs(formula))) %>%
+    dplyr::select(response_var_, names(res))
+
+  if (! "response" %in% names(res)) {
+    res <- dplyr::rename(res, response = response_var_)
+  }
+
 
   # return the appropriate format
   if (format == "long") {
-    res %>% tidyr::gather(stat, value, !! -(1:d))
+    if (one_group) {
+      res %>% tidyr::gather(stat, value)
+    } else {
+      res %>% tidyr::gather(stat, value, !! -(1:d))
+    }
   } else {
     res
   }

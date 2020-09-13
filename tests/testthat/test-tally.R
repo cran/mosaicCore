@@ -79,3 +79,26 @@ test_that("... passes through to table()", {
   expect_equivalent( length(tally(~x, useNA='ifany', margins=TRUE) ), 5 )
   expect_equivalent( tally(~x[1:6], useNA='always'), table(x[1:6], useNA = "always") )
 })
+
+test_that("formulas work for groups", {
+  expect_equivalent(
+    tally(sex ~ homeless, groups = substance, data = mosaicData::HELPrct),
+    tally(sex ~ homeless, groups = ~ substance, data = mosaicData::HELPrct)
+  )
+  expect_equivalent(
+    tally(~ homeless, groups = substance, data = mosaicData::HELPrct),
+    tally(~ homeless, groups = ~ substance, data = mosaicData::HELPrct)
+  )
+})
+
+context('Count Expansion')
+
+test_that("Count works", {
+  expect_equal(
+    count( ~sex | substance, data = mosaicData::HELPrct),
+    c(n_female.alcohol = 36L, n_female.cocaine = 41L, n_female.heroin = 30L))
+  expect_equal(
+    mosaicCore::count( mosaicData::HELPrct, sort =TRUE),
+    data.frame(n = 453L)
+  )
+})

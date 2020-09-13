@@ -157,7 +157,7 @@ tally.data.frame <- function(x, wt, sort=FALSE, ..., envir=parent.frame()) {
 #' @rdname tally
 #' @export
 tally.formula <-
-  function(x, data = parent.frame(2),
+  function(x, data = parent.frame(),
            format=c('count', 'proportion', 'percent', 'data.frame', 'sparse', 'default'),
            margins=FALSE,
            quiet=TRUE,
@@ -168,7 +168,7 @@ tally.formula <-
            ...) {
     format <- match.arg(format)
     formula_orig <- x
-    formula <- mosaic_formula_q(x, groups = groups, max.slots = 3, groups.first = groups.first)
+    formula <- mosaic_formula_q(x, groups = !!rlang::enexpr(groups), max.slots = 3, groups.first = groups.first)
     evalF <- evalFormula(formula, data)
 
     if (!missing(subset)) {
@@ -227,9 +227,9 @@ tally.default <-
            quiet=TRUE,
            subset,
            useNA = "ifany",
-           data = parent.frame(2),
+           data = parent.frame(),
            ...) {
-    D <- data_frame(X = x)
+    D <- dplyr::tibble(X = x)
     tally(
       ~ X, data = D, format = format, margins = margins,
       quiet = quiet, subset = subset, useNA = useNA,
@@ -376,27 +376,18 @@ count <- function(x, ...) {
 }
 
 #' @export
-count.data.frame <- function(x, ..., wt = NULL, sort = FALSE) {
-  vars <- lazyeval::lazy_dots(...)
-  wt <- substitute(wt)
-  dplyr::count_(x, vars, wt, sort = sort)
-}
+count.data.frame <-
+  function(
+    x, ...) {
+    dplyr::count(x, ...)
+  }
 
 #' @export
-count.tbl <- function(x, ..., wt = NULL, sort = FALSE) {
-  vars <- lazyeval::lazy_dots(...)
-  wt <- substitute(wt)
-  dplyr::count_(x, vars, wt, sort = sort)
-}
-
-#' @export
-count.default <- function(x, data = parent.frame(), ..., format="count") {
-  prop(x, data = data, ..., format = format)
-}
-
-# count_ <- function(x, data=parent.frame(), ..., format="count") {
-#	prop(x, data=data, ..., format=format)
-# }
+count.default <-
+  function(
+    x, data = parent.frame(), ..., format="count") {
+    prop(x, data = data, ..., format = format)
+  }
 
 #' @rdname prop
 #' @export
