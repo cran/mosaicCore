@@ -1,10 +1,10 @@
-d75dba8f1496a25a03fb39443efa17d7 *DESCRIPTION
+c06a4d34896b9abf962f400b6657d3b4 *DESCRIPTION
 c8b4ea5a47554865d64777117a157cd3 *NAMESPACE
-11e4aa3f8e43c4e17e5f340f5e3cfbea *NEWS.md
+00a0c5e333ff9eada6430aef2c56813e *NEWS.md
 e9cf58596952241475f2c1aebecfc8b1 *R/aggregate.R
 ce0813b410a179decde6c656862c41bd *R/ashplots.R
 ed6ce6d4a7e567c8193bc4fe4bc15948 *R/compare.R
-50503d48d053b61c2ea4e27da722557f *R/df_stats.R
+240412fbfcbccb185903cb8729f7d7ab *R/df_stats.R
 298d5fa3bd7629f1a1f592a05ffadb66 *R/dfapply.R
 3c56f7f0790df840f46b3d19fc1f391c *R/ediff.R
 f0dda356ecc469f5723fb4f09295ff95 *R/evalFormula.R
@@ -16,7 +16,7 @@ d5399461709773a3990ae0c8cdeb8921 *R/inspect.R
 0ca9c3e272e3e2f4fe9cb8035aae1b0e *R/interval-statistics.R
 d76c842b2870bc8f9060378d3cf44fc0 *R/list-utils.R
 c03e429ad740da3968854c883bbeb716 *R/logit.R
-0be5625397d349ae1a02d4877e67a6f5 *R/makeFun.R
+2a0d15709d321376687b244beab4dbf9 *R/makeFun.R
 b8710e4f7ac4ee14ce4fbbda5c0f1c2c *R/msummary.R
 4fe04379c446110c154b478c9b7cc56f *R/nice-names.R
 715c8da1a6f607df37e5e15fca267244 *R/nmissing.R
@@ -44,7 +44,7 @@ a5025e2d2ee03329e00aebaf9d797ee9 *man/inspect.Rd
 7ca224ab53cf30b3e6ccc9d33921d640 *man/list-utils.Rd
 97e8d85e2d95316a121ebdd828c82a79 *man/logical2factor.Rd
 b4ae9a5740c69f3b7b1daf4583df1017 *man/logit.Rd
-cde04fb8a1a54a68e3e316f60f6f8fce *man/makeFun.Rd
+e479cb200171d582c6203f238ec6448c *man/makeFun.Rd
 615c9e60f14d439949053eca8f2a1aef *man/make_df.Rd
 679dbe2819eeb8efca19dcedf85c7d03 *man/modelVars.Rd
 d02a215e38bd5ae1153048e0df69413c *man/mosaic_tally.Rd
@@ -64,4 +64,6 @@ ed92ea9b2d759852091ef415c7f8488f *tests/testthat.R
 9a9855641d90247210bf962b81c4edd8 *tests/testthat/test-df-stats.R
 41b8b62221896bb507d035b22086e85e *tests/testthat/test-evalFormula.R
 b09ba886154016766e761934bbc14b63 *tests/testthat/test-interval-calculations.R
+1ab15b0bb4d2cd4befca303f9179a8c6 *tests/testthat/test-makeFun-formula.R
+585cb41e087204c78fa2ae0f81e6244a *tests/testthat/test-makeFunction.R
 5bf46f2d4360110f21dcc032704ec743 *tests/testthat/test-tally.R

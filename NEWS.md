@@ -1,5 +1,10 @@
 # mosaicCore 
 
+# mosaicCore 0.9.1 
+
+* added support for one-sided formulas in `makeFun()`. 
+* cleaned up a bug in `df_stats(fromat = "long")`
+
 # mosaicCore 0.9
 
 * new function: `compare()`, a pretty version of `sign()`
