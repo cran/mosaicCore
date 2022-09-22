@@ -1,4 +1,4 @@
-c06a4d34896b9abf962f400b6657d3b4 *DESCRIPTION
+9b63272a5ad68d165d4525f8578b420e *DESCRIPTION
 c8b4ea5a47554865d64777117a157cd3 *NAMESPACE
 00a0c5e333ff9eada6430aef2c56813e *NEWS.md
 e9cf58596952241475f2c1aebecfc8b1 *R/aggregate.R
@@ -65,5 +65,5 @@ ed92ea9b2d759852091ef415c7f8488f *tests/testthat.R
 41b8b62221896bb507d035b22086e85e *tests/testthat/test-evalFormula.R
 b09ba886154016766e761934bbc14b63 *tests/testthat/test-interval-calculations.R
 1ab15b0bb4d2cd4befca303f9179a8c6 *tests/testthat/test-makeFun-formula.R
-585cb41e087204c78fa2ae0f81e6244a *tests/testthat/test-makeFunction.R
+02d039335384db9c0aeed312dee66b3c *tests/testthat/test-makeFunction.R
 5bf46f2d4360110f21dcc032704ec743 *tests/testthat/test-tally.R
